@@ -1,7 +1,17 @@
-tris = []
+from shapely.geometry import Point
+from shapely.geometry.polygon import Polygon
+
+origin = Point(0, 0)
+n = 0
 with open('res/triangles.txt') as f:
     for line in f:
-        tris.append([int(s) for s in line.strip().split(',')])
+        x1, y1, x2, y2, x3, y3 = map(int, line.strip().split(','))
+        tri = Polygon([(x1, y1), (x2, y2), (x3, y3)])
+        n += tri.contains(origin)
 
-for x1, y1, x2, y2, x3, y3 in tris:
-    print(x1)
+print(n)
+
+with open('res/triangles.txt') as f:
+    tris = [map(int, line.strip().split(',')) for line in f]
+    print(sum(Polygon([(a, b), (c, d), (e, f)]).contains(Point(0, 0))
+              for a, b, c, d, e, f in tris))
