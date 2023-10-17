@@ -1,4 +1,5 @@
 res/
+.ipynb_checkpoints
 rs/debug/
 rs/target/
 rs/Cargo.lock

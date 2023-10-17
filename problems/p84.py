@@ -1,12 +1,8 @@
 from random import randint
-from collections import deque
 
 
-def roll(sides=6, times=2):
-    r = 0
-    for _ in range(times):
-        r += randint(1, sides)
-    return r
+def roll(sides=6):
+    return [randint(1, sides), randint(1, sides)]
 
 
 class Space:
@@ -97,13 +93,19 @@ SPACES = list(
 )
 
 
-def take_turn(board, cs, prev_rolls):
-    cur_roll = roll(6)
-    prev_rolls.append(cur_roll)
-    if all(r == cur_roll for r in prev_rolls):
-        cs = board.space(nm="JAIL")
+def take_turn(board, cs, running_doubles=0):
+    cur_roll = roll()
+    spaces_to_advance = sum(cur_roll)
+    if cur_roll[0] == cur_roll[1]:
+        running_doubles += 1
     else:
-        cs = board.advance(cs, cur_roll)
+        running_doubles = 0
+
+    if running_doubles == 3:
+        cs = board.space(nm="JAIL")
+        running_doubles = 0
+    else:
+        cs = board.advance(cs, spaces_to_advance)
         draw = randint(1, 16)
         if cs.name.startswith("CC"):
             if draw == 1:
@@ -129,15 +131,17 @@ def take_turn(board, cs, prev_rolls):
                 cs = board.next_space_of_type(cs, "U")
             elif draw == 10:
                 cs = board.advance(cs, -3)
-    return cs, prev_rolls
+    return cs, running_doubles
 
 
-N_TURNS = 10 ** 5
+N_TURNS = 10 ** 6
 board = Board.from_list(SPACES)
 counts = {s: 0 for s in board.spaces}
 
-prev_rolls = deque(maxlen=3)
 cs = board.space(i=0)
+running_doubles = 0
 for _ in range(N_TURNS):
     counts[cs] += 1
-    cs, prev_rolls = take_turn(board, cs, prev_rolls)
+    cs, running_doubles = take_turn(board, cs, running_doubles)
+
+print(sorted(counts.items(), key=lambda kv: kv[1]))

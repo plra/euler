@@ -1,4 +1,5 @@
 from math import sqrt, floor, ceil
+from itertools import permutations
 
 words = None
 
@@ -7,6 +8,7 @@ with open("res/words.txt") as f:
 
 words.append("CARE")
 words.append("RACE")
+words = sorted(words, key=lambda s: -len(s))
 
 pairs = []
 for i, w1 in enumerate(words):
@@ -41,9 +43,12 @@ for w1, w2 in viable_pairs:
         #     continue
         for m in ns:
             for n in ns:
-                if sorted(zip(w1, str(m ** 2))) == sorted(zip(w2, str(n ** 2))):
-                    print(
-                        "({}, {}): ({}, {}): ({}, {})".format(
-                            w1, w2, m, n, m ** 2, n ** 2
+                if m == n:
+                    continue
+                for p in permutations(str(m ** 2)):
+                    if sorted(zip(w1, str(m ** 2))) == sorted(zip(w2, str(n ** 2))):
+                        print(
+                            "({}, {}): ({}, {}): ({}, {})".format(
+                                w1, w2, m, n, m ** 2, n ** 2
+                            )
                         )
-                    )
