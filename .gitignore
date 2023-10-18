@@ -1,5 +1,7 @@
-res/
+.vscode
 .ipynb_checkpoints
+__pycache__
+res/
 rs/debug/
 rs/target/
 rs/Cargo.lock
